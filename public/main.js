@@ -1,3 +1,22 @@
+var consts = {
+  "getUserInfo":'https://solarity-server.herokuapp.com/api/users/',
+  "roomVR":"https://solarity-stage.vercel.app/"
+};
+
+//////////////////////////- inject -//////////////////////////
+
+function onExtMessage(message, sender, sendResponse){
+  switch (message.command) {
+    case "getTransaction":
+      // fetch_custom(message.data, sender, sendResponse)
+    break;
+  }
+  return true
+}
+
+chrome.runtime.onMessage.addListener(onExtMessage);
+
+//  /////////////////////////////- bg.js -//////////////////////////////
 var version = "2.0";
 var uiSettings = {
 
@@ -66,21 +85,14 @@ function getProductReviewAsync(api, type) {
 }
 
 chrome.runtime.onMessage.addListener(twitterApp.onExtMessage);
-//twitterApp.load();
+// //twitterApp.load();
 
-function sendMessage1(msg, callbackfn) {
-  if(callbackfn!=null) {
-    callback.push(callbackfn);
-    msg.callback = "yes";
-  }
-  chrome.runtime.sendMessage(msg,callbackfn);
-}
-
-function sendMessage(tabId, msg){
+function sendMessage2(tabId, msg){
   if(tabId) chrome.tabs.sendMessage(tabId, msg);
   else chrome.runtime.sendMessage(sender.id, msg);
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  sendMessage(tabId, {"command": "initTwitterBtns"});
+  sendMessage2(tabId, {"command": "initTwitterBtns"});
 });
+

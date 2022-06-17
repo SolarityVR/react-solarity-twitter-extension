@@ -82,9 +82,8 @@ var list =[];
 
 async function addTwitterBtn() {
 
- var twitContainer = $('nav[aria-label="Profile timelines"]');
- $(twitContainer).each(function () {
-  var tweetContainer = $(this).closest('div[data-testid="primaryColumn"]');
+ $('nav[aria-label="Profile timelines"]').each(function (index) {
+   var tweetContainer = $(this).closest('div[data-testid="primaryColumn"]');
   if (tweetContainer.attr('tweet-consider') != '1') {
     tweetContainer.attr('tweet-consider', 1);
     $('.btn-twitter-exts').remove();
@@ -126,12 +125,13 @@ async function addTwitterBtn() {
         }
       }
     
-
+    // $('body').append(payBtn);
+    // $('body').append(roomBtn);
     $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(payBtn);
     $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(roomBtn);
     
     var A = tweetContainer.find('div[data-testid="placementTracking"]:eq(0)');
-    //A.prepend(payBtn); 
+    //A.prepend(payBtn);
     initEvents()
     var twitter_name = parseUsername(window.location.href)
     getUserInfo(twitter_name,false); //default room loaded from here
@@ -143,39 +143,42 @@ async function addTwitterBtn() {
 }
 
 function getUserInfo(twitter_name,modal){
-
   sendMessage({"command": "getInfoByWalletAddress","data":twitter_name},function(result){
-    $('body').find('.cover').remove();
-    if (result.success) {
-      var data=result.response;
-      var list = `<ul class="list-group">`;
-      for (var i = 0; i < data.length; i++) {
-        var title = data[i]['title'];
-        var roomId = data[i]['_id'];
-        var VR = 'https://solarity-stage.vercel.app/'+result.username+'/room'+i+'/'+roomId;
-        var selcted_room = i == 0 ? 'room-selected' : '';
-        var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" vr=`+VR+`>`+title+`</a>`;
-        list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
-      }
-
-      if (data.length != 0) {
-        list +=`</ul>`;
-        $('.modal-container').html(list);
-        var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
-        showVrBanner(defaultRoom);
+    if(chrome.runtime.lastError) {
+      setTimeout(getUserInfo, 50, twitter_name, modal);
+    } else {
+      $('body').find('.cover').remove();
+      if (result.success) {
+        var data=result.response;
+        var list = `<ul class="list-group">`;
+        for (var i = 0; i < data.length; i++) {
+          var title = data[i]['title'];
+          var roomId = data[i]['_id'];
+          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/room'+i+'/'+roomId;
+          var selcted_room = i == 0 ? 'room-selected' : '';
+          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" vr=`+VR+`>`+title+`</a>`;
+          list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
+        }
+  
+        if (data.length != 0) {
+          list +=`</ul>`;
+          $('.modal-container').html(list);
+          var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
+          showVrBanner(defaultRoom);
+        }else{
+          var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
+          <div class="error">You don't have rooms available!!</div>`;
+          $('.modal-container').html(errorHtml);  
+        }
       }else{
         var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
-        <div class="error">You don't have rooms available!!</div>`;
-        $('.modal-container').html(errorHtml);  
+        <div class="error">`+result.response+`</div>`;
+        $('.modal-container').html(errorHtml);
       }
-    }else{
-      var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
-      <div class="error">`+result.response+`</div>`;
-      $('.modal-container').html(errorHtml);
-    }
-    initEvents();    
-    if (modal) {
-      initModalBox();  
+      initEvents();    
+      if (modal) {
+        initModalBox();  
+      }
     }
   })
 
@@ -262,51 +265,53 @@ function parseUsername(url)
 
     // Parse username
     matches = url.match(/(?:https?:\/\/)?(?:www.)?(?:twitter|medium|facebook|vimeo|instagram)(?:.com\/)?([@a-zA-Z0-9-_]+)/im);
-
     // Set output
-    output = matches.length ? matches[1] : output;
+    output = !!matches && matches.length ? matches[1] : output;
 
     return output;
-  }
-  startchekingTwitter();
+}
+startchekingTwitter();
 
 
-  chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      if( request.message === "clicked_browser_action") {
-        initModalBoxPay();
-      }
-    }
-    );
-  function initModalBoxPay(isPay){
-    app.style.display = "block";
-    $('.xl.block').removeClass('disaled-pay')
-    if (isPay == '') {
-      $('.send-username').html('Send to '+parseUsername(window.location.href))
-      $('#solarity-extension-payment').show();
-    }else{
-      $('.xl.block').addClass('disaled-pay');
-      $('.send-username').html(`<div style="color:red;">`+isPay+' '+parseUsername(window.location.href)+`</div>`)
-      $('#solarity-extension-payment').show();
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if( request.message === "clicked_browser_action") {
+      initModalBoxPay();
     }
   }
+  );
+function initModalBoxPay(isPay){
+  app.style.display = "block";
+  $('.xl.block').removeClass('disaled-pay')
+  if (isPay == '') {
+    $('.send-username').html('Send to ' + parseUsername(window.location.href))
+    $('#solarity-extension-payment').show();
+  }else{
+    $('.xl.block').addClass('disaled-pay');
+    $('.send-username').html(`<div style="color:red;">`+isPay+' '+parseUsername(window.location.href)+`</div>`)
+    $('#solarity-extension-payment').show();
+  }
+}
 
-  function getUserInfoForPay(){
-    sendMessage({"command": "getInfoByWalletAddress","data":parseUsername(window.location.href)},function(result){
+function getUserInfoForPay(){
+  sendMessage({"command": "getInfoByWalletAddress","data":parseUsername(window.location.href)},function(result){
+    if(chrome.runtime.lastError) {
+      setTimeout(getUserInfoForPay, 50);
+    } else {
       $('body').find('.cover').hide();
       if (result.success) {
         solanaAddress=result.solanaAddress;
         initModalBoxPay('');
-      }else{
+      } else {
         initModalBoxPay('You Can\'t pay to');
       }
-
       initEvents();    
-    })
+    }
+  })
 
-  }
+}
 
-  window.addEventListener('RecieveContentApp', function(evt) {
+window.addEventListener('RecieveContentApp', function(evt) {
    if (evt.detail.msg == "pay-wallet") {
 
     var event = new CustomEvent('RecieveContent', {detail: { 'msg': "made-transaction", amoutn:evt.detail.amount,currency:evt.detail.currency,solanaAddress:solanaAddress }});
@@ -315,74 +320,169 @@ function parseUsername(url)
   
 })
 
-  window.addEventListener('RecieveWallate', function(evt) {
-    if (evt.detail.msg == "recieve-wallet") {
-      const publicKey = evt.detail.publicKey;
-      getUserInfoForPay();
-      //initModalBoxPay()
+window.addEventListener('RecieveWallate', function(evt) {
+  if (evt.detail.msg == "recieve-wallet") {
+    const publicKey = evt.detail.publicKey;
+    getUserInfoForPay();
+    //initModalBoxPay()
+  }
+
+})
+
+function parseHeaders(rawHeaders) {
+  var headers = new Headers();
+  // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+  // https://tools.ietf.org/html/rfc7230#section-3.2
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
+  preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
+    var parts = line.split(':');
+    var key = parts.shift().trim();
+    if (key) {
+      var value = parts.join(':').trim();
+      headers.append(key, value);
+    }
+  });
+  return headers
+}
+
+function fetch_custom(data) {
+  return new Promise(function(resolve, reject) {
+    var request = new Request(data.input, data.init);
+    if (request.signal && request.signal.aborted) {
+      return reject()
     }
 
+    var xhr = new XMLHttpRequest();
 
-  })
-
-  window.addEventListener('sendTransactionEvent', function(evt) {
-    sendMessage({"command": "getTransaction","data":{input:evt.detail.input, init:evt.detail.init}},function(response){
-      var _response = btoa(JSON.stringify(response));
-
-      var event = new CustomEvent('RecieveTransaction', {detail:  _response,res:_response});
-      window.dispatchEvent(event);
-    });
+    function abortXhr() {
+      xhr.abort();
+    }
     
+    xhr.onload = function() {
+      var options = {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+      };
+      options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL');
+      var body = 'response' in xhr ? xhr.response : xhr.responseText;
+
+      var _response = btoa(JSON.stringify({body:body,options:options}));
+      var event = new CustomEvent('RecieveTransaction', {detail:  _response, res:_response});
+      window.dispatchEvent(event);
+      // sendResponse({body:body,options:options});
+      /*var event = new CustomEvent('RecieveTransaction', {detail:  "ts-complete",data:new Response(body, options)});
+      window.dispatchEvent(event);*/
+          
+    };
+
+    xhr.onerror = function() {
+      reject(new TypeError('Network request failed'));
+    };
+
+    xhr.ontimeout = function() {
+      reject(new TypeError('Network request failed'));
+    };
+
+    xhr.onabort = function() {
+      reject(new exports.DOMException('Aborted', 'AbortError'));
+    };
+
+    xhr.open(request.method, request.url, true);
+
+    if (request.credentials === 'include') {
+      xhr.withCredentials = true;
+    } else if (request.credentials === 'omit') {
+      xhr.withCredentials = false;
+    }
+
+    /*if ('responseType' in xhr && support.blob) {
+      xhr.responseType = 'blob';
+    }*/
+
+    request.headers.forEach(function(value, name) {
+      xhr.setRequestHeader(name, value);
+    });
+
+    if (request.signal) {
+      request.signal.addEventListener('abort', abortXhr);
+
+      xhr.onreadystatechange = function() {
+        // DONE (success or failure)
+        if (xhr.readyState === 4) {
+          request.signal.removeEventListener('abort', abortXhr);
+        }
+      };
+    }
+
+    xhr.send(data.init.body);
   })
-  var myTwitterPage ={};
-  function onExtMessage(message, sender, sendResponse){
-    myTwitterPage.message = message;
-    switch (message.command) {
-      case "initTwitterBtns":
-      $('[tweet-consider="1"]').removeAttr('tweet-consider');
-      var injectNode = $('a[href$="/header_photo"]');
-      $(injectNode).children().show();
-      $('.slider').remove();
-      $('.modal-container ul').remove();
-      break;
+}
 
-    }
+function sendTransactionFunc() {
+  window.addEventListener('sendTransactionEvent', function(evt) {
+    fetch_custom({input:evt.detail.input, init:evt.detail.init})
+  })
+}
+sendTransactionFunc();
+var myTwitterPage ={};
+function onExtMessage(message, sender, sendResponse){
+  myTwitterPage.message = message;
+  switch (message.command) {
+    case "initTwitterBtns":
+    $('[tweet-consider="1"]').removeAttr('tweet-consider');
+    var injectNode = $('a[href$="/header_photo"]');
+    $(injectNode).children().show();
+    $('.slider').remove();
+    $('.modal-container ul').remove();
+    break;
+
   }
+}
+chrome.runtime.onMessage.addListener(onExtMessage);
 
-  var callback=[];
+var callback=[];
 
-  function sendMessage(msg, callbackfn) {
-    if(callbackfn!=null) {
-      callback.push(callbackfn);
-      msg.callback = "yes";
-    }
-    chrome.runtime.sendMessage(msg,callbackfn);
+
+function sendMessage(msg, callbackfn) {
+  if(!!callbackfn && !!callback) {
+    callback.push(callbackfn);
+    msg.callback = "yes";
   }
-  chrome.runtime.onMessage.addListener(onExtMessage);
+  chrome.runtime.sendMessage(msg,callbackfn);
+}
 
 
+function getAllTokenPrices() {
   sendMessage({"command": "getAllTokenPrices"},function(result){
-    for (var i = 0; i < result.length; i++) {
-      if (result[i]['type']=="solana") {
-        settings.solana=result[i]['result']['solana']['usd'];
+    if(chrome.runtime.lastError) {
+      setTimeout(getAllTokenPrices, 50)
+    } else {
+      for (var i = 0; i < result.length; i++) {
+        if (result[i]['type']=="solana") {
+          settings.solana=result[i]['result']['solana']['usd'];
+        }
+        if (result[i]['type']=="usdc") {
+          settings.usdc=result[i]['result']['usd-coin']['usd']
+        }
       }
-      if (result[i]['type']=="usdc") {
-        settings.usdc=result[i]['result']['usd-coin']['usd']
-      }
+    
+      $('[name="input_amount"]').data('settings',JSON.stringify(settings));
+      var priceData='$ '+numberWithCommas(settings.solana);
+      $('.xs-price').html(priceData);
     }
-
-    $('[name="input_amount"]').data('settings',JSON.stringify(settings));
-    var priceData='$ '+numberWithCommas(settings.solana);
-    $('.xs-price').html(priceData);
   })
+}
+getAllTokenPrices();
 
-  function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }  
-  function addJS(jsCode) {
-    var s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.innerText = jsCode;
-    document.getElementsByTagName('head')[0].appendChild(s);
-  }
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}  
+
+function addJS(jsCode) {
+  var s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.innerText = jsCode;
+  document.getElementsByTagName('head')[0].appendChild(s);
+}
 

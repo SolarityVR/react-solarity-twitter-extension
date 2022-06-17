@@ -1,8 +1,4 @@
-
-
-
-
-function fetch(data, sender, sendResponse) {
+function fetch_custom(data, sender, sendResponse) {
   return new Promise(function(resolve, reject) {
     var request = new Request(data.input, data.init);
     if (request.signal && request.signal.aborted) {
@@ -76,33 +72,29 @@ function fetch(data, sender, sendResponse) {
 
 function parseHeaders(rawHeaders) {
   var headers = new Headers();
-      // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
-      // https://tools.ietf.org/html/rfc7230#section-3.2
-      var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
-      preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
-        var parts = line.split(':');
-        var key = parts.shift().trim();
-        if (key) {
-          var value = parts.join(':').trim();
-          headers.append(key, value);
-        }
-      });
-      return headers
+  // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+  // https://tools.ietf.org/html/rfc7230#section-3.2
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
+  preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
+    var parts = line.split(':');
+    var key = parts.shift().trim();
+    if (key) {
+      var value = parts.join(':').trim();
+      headers.append(key, value);
     }
-    
+  });
+  return headers
+}
 
-
-    function onExtMessage(message, sender, sendResponse){
-     switch (message.command) {
-      case "getTransaction":
-      fetch(message.data, sender, sendResponse)
-      break;
-
-    }
-    return true
+function onExtMessage(message, sender, sendResponse){
+  switch (message.command) {
+    case "getTransaction":
+      fetch_custom(message.data, sender, sendResponse)
+    break;
   }
+  return true
+}
 
-
-  chrome.runtime.onMessage.addListener(onExtMessage);
+chrome.runtime.onMessage.addListener(onExtMessage);
 
  

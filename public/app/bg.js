@@ -2,17 +2,16 @@ var version = "2.0";
 var uiSettings = {
 
 };
-
 var twitterApp = {
   onExtMessage: function(message, sender, sendResponse){ 
     twitterApp.message = message;
     switch (message.command) {
       case "getInfoByWalletAddress":
-      twitterApp.getInfoByWalletAddress(message.data, sender, sendResponse)
-      break;
+        twitterApp.getInfoByWalletAddress(message.data, sender, sendResponse)
+        break;
       case "getAllTokenPrices":
-      twitterApp.getAllTokenPrices(message.data, sender, sendResponse)
-      break;
+        twitterApp.getAllTokenPrices(message.data, sender, sendResponse)
+        break;
     }
     return true;
   },
@@ -25,56 +24,47 @@ var twitterApp = {
         var api = tokens[i]['api'];
         var type = tokens[i]['type'];
         promise_all_urls_arr.push(
-          getProductReviewAsync(api,type).then((apiResponse) => {
+          getProductReviewAsync(api,type)
+          .then((apiResponse) => {
             all_push_data_arr.push(apiResponse);
           }) 
-          .catch(error => {
-            console.error("error", error);
-          })
-          );
+        );
       }
       Promise
       .all(promise_all_urls_arr)
       .then(() => {
-        console.log(all_push_data_arr)
         sendResponse(all_push_data_arr);
       }); 
-    
   },
-getInfoByWalletAddress:function(address,sender, sendResponse){
-  $.ajax({
-    method: "GET",
-    url: 'https://solarity-server.herokuapp.com/api/users/'+address,
-    success:function(response) {
-      sendResponse({
-        'success':true,
-        "solanaAddress" : response.user.solanaAddress,
-        "response" : response.user.rooms,
-        "username" : response.user.username
-      });
-    },
-    error:function(response) {
-      sendResponse({
-        'success':false,
-        "response" : response.responseJSON.message
-      });
-
-    }
-  });
-
-}  
-
+  getInfoByWalletAddress:function(address,sender, sendResponse){
+    fetch('https://solarity-server.herokuapp.com/api/users/'+address)
+      .then(async (response) => {
+        var data = await response.json();
+        sendResponse({
+          'success':true,
+          "solanaAddress" : data.user.solanaAddress,
+          "response" : data.user.rooms,
+          "username" : data.user.username
+        });
+      })
+      .catch((error) => {
+        sendResponse({
+          'success':false,
+          "response" : error.message
+        });
+      })
+  }  
 };
 
- function getProductReviewAsync(api,type) {
-    return new Promise((resolve, reject) => {
-      $.get( api, function( data ) {
-        console.log(data)
-        var rs={'type':type,'result':data}
-        resolve(rs);
-      });
-    });
-  }
+function getProductReviewAsync(api, type) {
+  return new Promise(async (resolve, reject) => {
+    var data = await fetch(api);
+    var data_json = await data.json();
+    var rs = {'type': type, 'result': data_json}
+    resolve(rs);
+  });
+}
+
 chrome.runtime.onMessage.addListener(twitterApp.onExtMessage);
 //twitterApp.load();
 
@@ -93,6 +83,4 @@ function sendMessage(tabId, msg){
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   sendMessage(tabId, {"command": "initTwitterBtns"});
-
-}); 
-
+});

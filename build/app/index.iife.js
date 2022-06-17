@@ -24654,34 +24654,34 @@ var solanaWeb3 = (function (exports) {
 	    exports.DOMException.prototype.constructor = exports.DOMException;
 	  }
 
-	  function fetch(input, init) {
+	  function fetch2(input, init) {
 	    return new Promise(function(resolve, reject) {
 	    	
 	    	var event = new CustomEvent('sendTransactionEvent', {detail: { 'input': input, 'init': init }});
-			window.dispatchEvent(event);
+				window.dispatchEvent(event);
 
-			function checkSuccess(){
-				if (Tdata != 0) {
-					let resultD = Tdata;
-					Tdata =0;
-					resolve(resultD)
+				function checkSuccess() {console.log(Tdata);
+					if (Tdata != 0) {
+						let resultD = Tdata;
+						Tdata =0;
+						resolve(resultD);
 
-				}else{
-					setTimeout(function(){
-						checkSuccess()
-					},300)		
+					} else {
+						setTimeout(function(){
+							checkSuccess()
+						}, 300)		
+					}
 				}
-			}
-			setTimeout(function(){
-				checkSuccess()
-			},300)
-		})
+				setTimeout(function(){
+					checkSuccess()
+				},300)
+			})
 	  }
 
-	  fetch.polyfill = true;
+	  fetch2.polyfill = true;
 
 	  if (!self.fetch) {
-	    self.fetch = fetch;
+	    self.fetch = fetch2;
 	    self.Headers = Headers;
 	    self.Request = Request;
 	    self.Response = Response;
@@ -24690,7 +24690,7 @@ var solanaWeb3 = (function (exports) {
 	  exports.Headers = Headers;
 	  exports.Request = Request;
 	  exports.Response = Response;
-	  exports.fetch = fetch;
+	  exports.fetch = fetch2;
 
 	  Object.defineProperty(exports, '__esModule', { value: true });
 
@@ -30218,7 +30218,7 @@ var solanaWeb3 = (function (exports) {
 
 })({});
 //# sourceMappingURL=index.iife.js.map
-let Tdata = 0;
+var Tdata = 0;
 window.addEventListener('RecieveTransaction', function(evt) {
 	if (evt.detail != undefined) {
 		var sData = JSON.parse(atob(evt.detail))
