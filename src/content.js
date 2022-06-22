@@ -11,7 +11,6 @@ import AppW from "./App.test";
 import { payIcon, roomIcon } from './icons'
 import * as web3 from '@solana/web3.js';
 
-
 var settings={
   solana:0,
   usdc:0,
@@ -94,9 +93,9 @@ async function addTwitterBtn() {
 
     $(roomBtn).click(function (e) {
       var twitter_name = parseUsername(window.location.href);
-      if ($('.modal-container ul li').length != 0) {
+      if ($('.modal-container ul li').length == 0) {
         initModalBox();
-      }else{
+      } else {
         $('body').append('<div class="cover"> loading...</div>');
         getUserInfo(twitter_name,true);
         //initModalBox(); 
@@ -121,9 +120,9 @@ async function addTwitterBtn() {
         if (document.querySelector('meta[content="profile"]') && !document.querySelector(".btn-twitter-exts") && people_username == own_username) {
           $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(payBtn);
           $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(roomBtn);
-          }      
-        }
+        }      
       }
+    }
     
     // $('body').append(payBtn);
     // $('body').append(roomBtn);
@@ -149,14 +148,17 @@ function getUserInfo(twitter_name,modal){
     } else {
       $('body').find('.cover').remove();
       if (result.success) {
+        if(localStorage.getItem('solarity-selected-room-index') == undefined) {
+          localStorage.setItem('solarity-selected-room-index', 0);
+        }
         var data=result.response;
         var list = `<ul class="list-group">`;
         for (var i = 0; i < data.length; i++) {
           var title = data[i]['title'];
           var roomId = data[i]['_id'];
-          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/room'+i+'/'+roomId;
-          var selcted_room = i == 0 ? 'room-selected' : '';
-          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" vr=`+VR+`>`+title+`</a>`;
+          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/room'+data[i]['roomNo']+'/'+roomId;
+          var selcted_room = i == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
+          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="${i}" vr=`+VR+`>`+title+`</a>`;
           list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
         }
   
@@ -164,7 +166,9 @@ function getUserInfo(twitter_name,modal){
           list +=`</ul>`;
           $('.modal-container').html(list);
           var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
-          showVrBanner(defaultRoom);
+          if(modal == false) {
+            showVrBanner(defaultRoom);
+          }
         }else{
           var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
           <div class="error">You don't have rooms available!!</div>`;
@@ -226,6 +230,8 @@ function initEvents(){
 
  $('.buttonRoomSolana').off().on('click', function(e) {
   var vr = $(this).attr('vr');
+  var index = $(this).attr('roomIndex');
+  localStorage.setItem('solarity-selected-room-index', index);
   toggleModal();
   $('.modal-container ul li').removeClass('room-selected');
   $(this).closest('li').addClass('room-selected');
@@ -263,12 +269,12 @@ function parseUsername(url)
   let output = url;
   let matches;
 
-    // Parse username
-    matches = url.match(/(?:https?:\/\/)?(?:www.)?(?:twitter|medium|facebook|vimeo|instagram)(?:.com\/)?([@a-zA-Z0-9-_]+)/im);
-    // Set output
-    output = !!matches && matches.length ? matches[1] : output;
-
-    return output;
+  // Parse username
+  matches = url.match(/(?:https?:\/\/)?(?:www.)?(?:twitter|medium|facebook|vimeo|instagram)(?:.com\/)?([@a-zA-Z0-9-_]+)/im);
+  // Set output
+  output = !!matches && matches.length ? matches[1] : output;
+  
+  return output;
 }
 startchekingTwitter();
 

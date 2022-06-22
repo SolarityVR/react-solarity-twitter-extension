@@ -30,6 +30,7 @@ window.addEventListener('RecieveContent', function(evt) {
     else{
      transferSOL(evt.detail.amoutn,evt.detail.currency,evt.detail.solanaAddress);
     }
+    document.getElementById('twitter-pay-extension-root').style.display="none";
   }
 
   const getProvider = async () => {
