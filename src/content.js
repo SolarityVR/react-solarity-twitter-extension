@@ -163,6 +163,12 @@ function getUserInfo(twitter_name,modal){
         }
   
         if (data.length != 0) {
+          if(parseUsername(window.location.href) == "oraziogrinzosih") {
+          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/hub/';
+          var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
+          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
+            list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
+          }
           list +=`</ul>`;
           $('.modal-container').html(list);
           var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
