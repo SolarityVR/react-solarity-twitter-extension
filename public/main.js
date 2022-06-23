@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(onExtMessage);
 //  /////////////////////////////- bg.js -//////////////////////////////
 var version = "2.0";
 var uiSettings = {
-
+  
 };
 var twitterApp = {
   onExtMessage: function(message, sender, sendResponse){ 

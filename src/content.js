@@ -113,6 +113,7 @@ async function addTwitterBtn() {
 
     
     /*Check for profile page*/
+
     if(document.querySelector("title")) {
       if(document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)) {
         let people_username = document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)[0]
@@ -181,9 +182,23 @@ function getUserInfo(twitter_name,modal){
           $('.modal-container').html(errorHtml);  
         }
       }else{
-        var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
-        <div class="error">`+result.response+`</div>`;
-        $('.modal-container').html(errorHtml);
+        if(twitter_name == "SolanaMoneyBoys") {
+          var list = `<ul class="list-group">`;
+          var VR = 'https://solarity-stage.vercel.app/oraziogrinzosih/hub/';
+          var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
+          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
+            list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
+          list +=`</ul>`;
+          $('.modal-container').html(list);
+          var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
+          if(modal == false) {
+            showVrBanner(defaultRoom);
+          }
+        } else {
+          var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
+          <div class="error">`+result.response+`</div>`;
+          $('.modal-container').html(errorHtml);
+        }
       }
       initEvents();    
       if (modal) {

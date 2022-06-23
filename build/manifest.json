@@ -1,7 +1,7 @@
 {
-  "short_name": "Twitter PAY Extension",
-  "name": "Twitter PAY Extension",
-  "version": "1.1",
+  "short_name": "Twitter Verse",
+  "name": "Twitter Verse",
+  "version": "1.0",
   "manifest_version": 3,
   "background": {
      "service_worker": "main.js"
@@ -27,7 +27,6 @@
       "js": ["/static/js/content.js"]
     }
   ],
-  "permissions": ["scripting"],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources":[{
     "resources": ["/static/css/content.css", "/static/media/*" ,"/app/*"],
