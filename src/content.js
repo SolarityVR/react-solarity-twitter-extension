@@ -91,6 +91,7 @@ async function addTwitterBtn() {
 
     var roomBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer" title="ROOM">`+roomIcon+`</div>`);
 
+    var viewBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer;color:#f2f2f2;" title="VIEW">`+'<svg xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;padding: 4px;" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>'+`</div>`)
     $(roomBtn).click(function (e) {
       var twitter_name = parseUsername(window.location.href);
       if ($('.modal-container ul li').length == 0) {
@@ -98,7 +99,7 @@ async function addTwitterBtn() {
       } else {
         $('body').append('<div class="cover"> loading...</div>');
         getUserInfo(twitter_name,true);
-        //initModalBox(); 
+        //initModalBox();
       }
     });
 
@@ -111,6 +112,9 @@ async function addTwitterBtn() {
       window.dispatchEvent(event);
     });
 
+    $(viewBtn).click(function(e) {
+      showVrBanner("https://main.d2rg0l816a56cd.amplifyapp.com/iframe/joinModal/plaza");
+    })
     
     /*Check for profile page*/
 
@@ -125,21 +129,20 @@ async function addTwitterBtn() {
       }
     }
     
-    // $('body').append(payBtn);
-    // $('body').append(roomBtn);
+    // $('body .buttons').append(payBtn);
+    // $('body .buttons').append(roomBtn);
+    // $('body .buttons').append(viewBtn);
     $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(payBtn);
     $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(roomBtn);
+    $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(viewBtn);
     
     var A = tweetContainer.find('div[data-testid="placementTracking"]:eq(0)');
     //A.prepend(payBtn);
     initEvents()
     var twitter_name = parseUsername(window.location.href)
     getUserInfo(twitter_name,false); //default room loaded from here
-
   }
 });
-
-
 }
 
 function getUserInfo(twitter_name,modal){
@@ -154,10 +157,11 @@ function getUserInfo(twitter_name,modal){
         }
         var data=result.response;
         var list = `<ul class="list-group">`;
+        if(twitter_name == "Solarity_VR")
         for (var i = 0; i < data.length; i++) {
           var title = data[i]['title'];
           var roomId = data[i]['_id'];
-          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/room'+data[i]['roomNo']+'/'+roomId;
+          var VR = 'https://main.d2rg0l816a56cd.amplifyapp.com/'+result.username+'/room'+data[i]['roomNo']+'/'+roomId;
           var selcted_room = i == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="${i}" vr=`+VR+`>`+title+`</a>`;
           list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -165,7 +169,7 @@ function getUserInfo(twitter_name,modal){
   
         if (data.length != 0) {
           if(parseUsername(window.location.href) == "oraziogrinzosih") {
-          var VR = 'https://solarity-stage.vercel.app/'+result.username+'/hub/';
+          var VR = 'https://main.d2rg0l816a56cd.amplifyapp.com/'+result.username+'/hub/';
           var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
             list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -177,14 +181,26 @@ function getUserInfo(twitter_name,modal){
             showVrBanner(defaultRoom);
           }
         }else{
-          var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
+          var errorHtml = `<h4><strong><a href="https://main.d2rg0l816a56cd.amplifyapp.com/" target="_blank">Create a profile on our website</a></strong></h4>
           <div class="error">You don't have rooms available!!</div>`;
           $('.modal-container').html(errorHtml);  
         }
-      }else{
+      } else {
         if(twitter_name == "SolanaMoneyBoys") {
           var list = `<ul class="list-group">`;
-          var VR = 'https://solarity-stage.vercel.app/oraziogrinzosih/hub/';
+          var VR = 'https://main.d2rg0l816a56cd.amplifyapp.com/oraziogrinzosih/hub/';
+          var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
+          var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
+            list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
+          list +=`</ul>`;
+          $('.modal-container').html(list);
+          var defaultRoom = $('.modal-container ul li:eq(0)').find('a').attr('vr');
+          if(modal == false) {
+            showVrBanner(defaultRoom);
+          }
+        } else if (twitter_name == "Solarity_VR") {
+          var list = `<ul class="list-group">`;
+          var VR = 'https://main.d2rg0l816a56cd.amplifyapp.com/frames/plaza';
           var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
             list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -195,7 +211,7 @@ function getUserInfo(twitter_name,modal){
             showVrBanner(defaultRoom);
           }
         } else {
-          var errorHtml = `<h4><strong><a href="https://solarity-stage.vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
+          var errorHtml = `<h4><strong><a href="https://main.d2rg0l816a56cd.amplifyapp.com/" target="_blank">Create a profile on our website</a></strong></h4>
           <div class="error">`+result.response+`</div>`;
           $('.modal-container').html(errorHtml);
         }
@@ -232,15 +248,15 @@ function initModalBox(){
 }
 function showVrBanner(vr){
   var VR = vr;
-  var vrFrame=`<iframe frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" allowtransparency="true" src="`+VR+`"  id="vr-frame" scrolling="no" width="100%" height="100%"></iframe>`;
+  var vrFrame=`<iframe frameborder="0" src="`+VR+`" featurepolicy='{"vr": ["*"]}' allow="camera;microphone;vr;" scrolling="no" width="100%" height="100%"></iframe>`;
   var carousel= `<div class="slider">
   <ul><li class="c"> `+vrFrame+` </li></ul></div>`;
   //show room crausal here
   var injectNode = $('a[href$="/header_photo"]');
   $('.slider').remove();
   $(injectNode).children().hide();
-  injectNode.prepend(carousel)
-  initEvents()
+  injectNode.prepend(carousel);
+  initEvents();
 }
 
 function initEvents(){
@@ -248,8 +264,7 @@ function initEvents(){
    e.preventDefault(); 
  });
 
-
- $('.buttonRoomSolana').off().on('click', function(e) {
+$('.buttonRoomSolana').off().on('click', function(e) {
   var vr = $(this).attr('vr');
   var index = $(this).attr('roomIndex');
   localStorage.setItem('solarity-selected-room-index', index);
@@ -280,10 +295,10 @@ function startchekingTwitter(){
   if ( isPageFocused == true ) {
     addTwitterBtn();
   }    
-  setTimeout(function(){
-    startchekingTwitter();
-  }, 1500);  
 }
+setTimeout(function(){
+  startchekingTwitter();
+}, 1500);
 
 function parseUsername(url)
 {
@@ -297,7 +312,7 @@ function parseUsername(url)
   
   return output;
 }
-startchekingTwitter();
+// startchekingTwitter();
 
 
 chrome.runtime.onMessage.addListener(
@@ -335,7 +350,6 @@ function getUserInfoForPay(){
       initEvents();    
     }
   })
-
 }
 
 window.addEventListener('RecieveContentApp', function(evt) {
@@ -460,7 +474,6 @@ function onExtMessage(message, sender, sendResponse){
     $('[tweet-consider="1"]').removeAttr('tweet-consider');
     var injectNode = $('a[href$="/header_photo"]');
     $(injectNode).children().show();
-    $('.slider').remove();
     $('.modal-container ul').remove();
     break;
 

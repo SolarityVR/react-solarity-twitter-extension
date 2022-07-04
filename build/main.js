@@ -1,6 +1,6 @@
 var consts = {
-  "getUserInfo":'https://solarity-server.herokuapp.com/api/users/',
-  "roomVR":"https://solarity-stage.vercel.app/"
+  "getUserInfo":'https://solarity-backend.herokuapp.com/api/users/',
+  "roomVR":"https://main.d2rg0l816a56cd.amplifyapp.com/"
 };
 
 //////////////////////////- inject -//////////////////////////
@@ -56,7 +56,7 @@ var twitterApp = {
       }); 
   },
   getInfoByWalletAddress:function(address,sender, sendResponse){
-    fetch('https://solarity-server.herokuapp.com/api/users/'+address)
+    fetch('https://solarity-backend.herokuapp.com/api/users/'+address)
       .then(async (response) => {
         var data = await response.json();
         sendResponse({
