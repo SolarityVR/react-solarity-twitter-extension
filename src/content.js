@@ -17,6 +17,19 @@ var settings={
   verse:0
 }
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    // listen for messages sent from background.js
+    if (request.command === 'initTwitterBtns') {
+      if(window.locationUrl != undefined && window.locationUrl == window.location.href) {
+        return;
+      }
+      window.locationUrl = window.location.href;
+      setTimeout(function(){
+        startchekingTwitter();
+      }, 1000);
+    }
+});
 
 class Main extends React.Component {
 
@@ -81,68 +94,66 @@ var list =[];
 
 async function addTwitterBtn() {
 
- $('nav[aria-label="Profile timelines"]').each(function (index) {
-   var tweetContainer = $(this).closest('div[data-testid="primaryColumn"]');
-  if (tweetContainer.attr('tweet-consider') != '1') {
-    tweetContainer.attr('tweet-consider', 1);
-    $('.btn-twitter-exts').remove();
+  $('nav[aria-label="Profile timelines"]').each(function (index) {
     $(this).parent().attr('addition','pay');
-    var payBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style="margin-bottom: 14px;margin-right:8px;cursor:pointer;" title="PAY">`+payIcon+`</div>`);
+  });
+  $('.btn-twitter-exts').remove();
+  var payBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style="margin-bottom: 14px;margin-right:8px;cursor:pointer;" title="PAY">`+payIcon+`</div>`);
 
-    var roomBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer" title="ROOM">`+roomIcon+`</div>`);
+  var roomBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer" title="ROOM">`+roomIcon+`</div>`);
 
-    var viewBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer;color:#f2f2f2;" title="VIEW">`+'<svg xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;padding: 4px;" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>'+`</div>`)
-    $(roomBtn).click(function (e) {
-      var twitter_name = parseUsername(window.location.href);
-      if ($('.modal-container ul li').length == 0) {
-        initModalBox();
-      } else {
-        $('body').append('<div class="cover"> loading...</div>');
-        getUserInfo(twitter_name,true);
-        //initModalBox();
-      }
-    });
-
-    $(payBtn).click(function (e) {
-
-      if ($('.cover').length == 0) {
-        $('body').append('<div class="cover"> loading...</div>');  
-      }
-      var event = new CustomEvent('RecieveContent', {detail:  "connect-wallet"});
-      window.dispatchEvent(event);
-    });
-
-    $(viewBtn).click(function(e) {
-      showVrBanner("https://main.d2rg0l816a56cd.amplifyapp.com/iframe/joinModal/plaza");
-    })
-    
-    /*Check for profile page*/
-
-    if(document.querySelector("title")) {
-      if(document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)) {
-        let people_username = document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)[0]
-        let own_username = document.querySelector('[aria-label="Account menu"]').innerText.match(/(?<=@).*/)[0]
-        if (document.querySelector('meta[content="profile"]') && !document.querySelector(".btn-twitter-exts") && people_username == own_username) {
-          $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(payBtn);
-          $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(roomBtn);
-        }      
-      }
+  var viewBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer;color:#f2f2f2;" title="VIEW">`+'<svg xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;padding: 4px;" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>'+`</div>`)
+  $(roomBtn).click(function (e) {
+    var twitter_name = parseUsername(window.location.href);
+    if ($('.modal-container ul li').length == 0) {
+      initModalBox();
+    } else {
+      $('body').append('<div class="cover"> loading...</div>');
+      getUserInfo(twitter_name,true);
+      //initModalBox();
     }
-    
-    // $('body .buttons').append(payBtn);
-    // $('body .buttons').append(roomBtn);
-    // $('body .buttons').append(viewBtn);
-    $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(payBtn);
-    $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(roomBtn);
-    $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(viewBtn);
-    
-    var A = tweetContainer.find('div[data-testid="placementTracking"]:eq(0)');
-    //A.prepend(payBtn);
-    initEvents()
-    var twitter_name = parseUsername(window.location.href)
-    getUserInfo(twitter_name,false); //default room loaded from here
-  }
-});
+  });
+
+  $(payBtn).click(function (e) {
+
+    if ($('.cover').length == 0) {
+      $('body').append('<div class="cover"> loading...</div>');  
+    }
+    var event = new CustomEvent('RecieveContent', {detail:  "connect-wallet"});
+    window.dispatchEvent(event);
+  });
+
+  $(viewBtn).click(function(e) {
+    showVrBanner("https://main.d2rg0l816a56cd.amplifyapp.com/iframe/joinModal/plaza");
+  })
+  
+  /*Check for profile page*/
+
+  // if(document.querySelector("title")) {
+  //   if(document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)) {
+  //     let people_username = document.querySelector("title").innerText.match(/(?<=\(@).*(?=\))/)[0]
+  //     let own_username = document.querySelector('[aria-label="Account menu"]').innerText.match(/(?<=@).*/)[0]
+  //     if (document.querySelector('meta[content="profile"]') && !document.querySelector(".btn-twitter-exts") && people_username == own_username) {
+  //       $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(payBtn);
+  //       $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > a[data-testid*='editProfileButton']").before(roomBtn);
+  //     }      
+  //   }
+  // }
+  // $('body .buttons').append(payBtn);
+  // $('body .buttons').append(roomBtn);
+  // $('body .buttons').append(viewBtn);
+  //others profile
+  $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(payBtn);
+  $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(roomBtn);
+  $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(viewBtn);
+  //your profile
+  $('a[data-testid="editProfileButton"]').before(payBtn);
+  $('a[data-testid="editProfileButton"]').before(roomBtn);
+  $('a[data-testid="editProfileButton"]').before(viewBtn);
+
+  initEvents()
+  var twitter_name = parseUsername(window.location.href)
+  getUserInfo(twitter_name,false); //default room loaded from here
 }
 
 function getUserInfo(twitter_name,modal){
@@ -157,7 +168,6 @@ function getUserInfo(twitter_name,modal){
         }
         var data=result.response;
         var list = `<ul class="list-group">`;
-        if(twitter_name == "Solarity_VR")
         for (var i = 0; i < data.length; i++) {
           var title = data[i]['title'];
           var roomId = data[i]['_id'];
@@ -170,9 +180,9 @@ function getUserInfo(twitter_name,modal){
         if (data.length != 0) {
           if(parseUsername(window.location.href) == "oraziogrinzosih") {
           var VR = 'https://main.d2rg0l816a56cd.amplifyapp.com/'+result.username+'/hub/';
-          var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
+          // var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
-            list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
+            list +=`<li>`+roomVrFrame+`</li>`
           }
           list +=`</ul>`;
           $('.modal-container').html(list);
@@ -254,52 +264,45 @@ function showVrBanner(vr){
   //show room crausal here
   var injectNode = $('a[href$="/header_photo"]');
   $('.slider').remove();
-  $(injectNode).children().hide();
+  $(injectNode).children().remove();
   injectNode.prepend(carousel);
   initEvents();
 }
 
 function initEvents(){
- $('a[href$="/header_photo"]').on('click', function(e) {
-   e.preventDefault(); 
- });
+  $('a[href$="/header_photo"]').on('click', function(e) {
+    e.preventDefault(); 
+  });
 
-$('.buttonRoomSolana').off().on('click', function(e) {
-  var vr = $(this).attr('vr');
-  var index = $(this).attr('roomIndex');
-  localStorage.setItem('solarity-selected-room-index', index);
-  toggleModal();
-  $('.modal-container ul li').removeClass('room-selected');
-  $(this).closest('li').addClass('room-selected');
-  showVrBanner(vr);
-});
+  $('.buttonRoomSolana').off().on('click', function(e) {
+    var vr = $(this).attr('vr');
+    var index = $(this).attr('roomIndex');
+    localStorage.setItem('solarity-selected-room-index', index);
+    toggleModal();
+    $('.modal-container ul li').removeClass('room-selected');
+    $(this).closest('li').addClass('room-selected');
+    showVrBanner(vr);
+  });
 
- $('.a-c-sign').keyup(function() {
-  $(this).css('width', ($(this).val().length*30)+'px')
-  
-});
+  $('.a-c-sign').keyup(function() {
+    $(this).css('width', ($(this).val().length*30)+'px')
+    
+  });
 
- $('.btn-c-select').off().on('click', function(e) {
-  const svg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-check">
-  <path d="M10 3L4.5 8.5L2 6" stroke="#1149FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-  </svg>`;
-  $('.btn-c-select').find('.svg-check').remove();
-  $(this).append(svg);
-});
+  $('.btn-c-select').off().on('click', function(e) {
+    const svg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="svg-check">
+    <path d="M10 3L4.5 8.5L2 6" stroke="#1149FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>`;
+    $('.btn-c-select').find('.svg-check').remove();
+    $(this).append(svg);
+  });
 
 
 }
 
 function startchekingTwitter(){
-  const isPageFocused = document.visibilityState == "visible" ? true : false;
-  if ( isPageFocused == true ) {
-    addTwitterBtn();
-  }    
+  addTwitterBtn();
 }
-setTimeout(function(){
-  startchekingTwitter();
-}, 1500);
-
 function parseUsername(url)
 {
   let output = url;
@@ -328,7 +331,7 @@ function initModalBoxPay(isPay){
   if (isPay == '') {
     $('.send-username').html('Send to ' + parseUsername(window.location.href))
     $('#solarity-extension-payment').show();
-  }else{
+  } else {
     $('.xl.block').addClass('disaled-pay');
     $('.send-username').html(`<div style="color:red;">`+isPay+' '+parseUsername(window.location.href)+`</div>`)
     $('#solarity-extension-payment').show();

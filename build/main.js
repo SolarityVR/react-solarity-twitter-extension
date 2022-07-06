@@ -93,6 +93,6 @@ function sendMessage2(tabId, msg){
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  sendMessage2(tabId, {"command": "initTwitterBtns"});
+    sendMessage2(tabId, {"command": "initTwitterBtns", "changeInfo": changeInfo});
 });
 
