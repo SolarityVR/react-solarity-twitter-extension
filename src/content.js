@@ -124,7 +124,7 @@ async function addTwitterBtn() {
   });
 
   $(viewBtn).click(function(e) {
-    showVrBanner("https://main.d2elcgmt9fw3n1.amplifyapp.com/iframe/joinModal/plaza");
+    showVrBanner("https://solarity-frontend-vercel.app/iframe/joinModal/plaza");
   })
   
   /*Check for profile page*/
@@ -139,9 +139,9 @@ async function addTwitterBtn() {
   //     }      
   //   }
   // }
-  // $('body .buttons').append(payBtn);
-  // $('body .buttons').append(roomBtn);
-  // $('body .buttons').append(viewBtn);
+  $('body .buttons').append(payBtn);
+  $('body .buttons').append(roomBtn);
+  $('body .buttons').append(viewBtn);
   //others profile
   $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(payBtn);
   $("div[data-testid='primaryColumn']").find("div:not([addition='pay']) > div[data-testid*='follow']").closest('[data-testid="placementTracking"]').before(roomBtn);
@@ -171,7 +171,7 @@ function getUserInfo(twitter_name,modal){
         for (var i = 0; i < data.length; i++) {
           var title = data[i]['title'];
           var roomId = data[i]['_id'];
-          var VR = 'https://main.d2elcgmt9fw3n1.amplifyapp.com/'+result.username+'/room'+data[i]['roomNo']+'/'+roomId;
+          var VR = 'https://solarity-frontend-vercel.app/'+result.username+'/room'+data[i]['roomNo']+'/'+roomId;
           var selcted_room = i == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="${i}" vr=`+VR+`>`+title+`</a>`;
           list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -179,7 +179,7 @@ function getUserInfo(twitter_name,modal){
   
         if (data.length != 0) {
           if(parseUsername(window.location.href) == "oraziogrinzosih") {
-          var VR = 'https://main.d2elcgmt9fw3n1.amplifyapp.com/'+result.username+'/hub/';
+          var VR = 'https://solarity-frontend-vercel.app/'+result.username+'/hub/';
           // var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
             list +=`<li>`+roomVrFrame+`</li>`
@@ -191,14 +191,14 @@ function getUserInfo(twitter_name,modal){
             showVrBanner(defaultRoom);
           }
         }else{
-          var errorHtml = `<h4><strong><a href="https://main.d2elcgmt9fw3n1.amplifyapp.com/" target="_blank">Create a profile on our website</a></strong></h4>
+          var errorHtml = `<h4><strong><a href="https://solarity-frontend-vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
           <div class="error">You don't have rooms available!!</div>`;
           $('.modal-container').html(errorHtml);  
         }
       } else {
         if(twitter_name == "SolanaMoneyBoys") {
           var list = `<ul class="list-group">`;
-          var VR = 'https://main.d2elcgmt9fw3n1.amplifyapp.com/oraziogrinzosih/hub/';
+          var VR = 'https://solarity-frontend-vercel.app/oraziogrinzosih/hub/';
           var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
             list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -210,7 +210,7 @@ function getUserInfo(twitter_name,modal){
           }
         } else if (twitter_name == "Solarity_VR") {
           var list = `<ul class="list-group">`;
-          var VR = 'https://main.d2elcgmt9fw3n1.amplifyapp.com/frames/plaza';
+          var VR = 'https://solarity-frontend-vercel.app/frames/plaza';
           var selcted_room = -1 == localStorage.getItem('solarity-selected-room-index') ? 'room-selected' : '';
           var roomVrFrame = `<a  href="javascript:;" class="buttonRoomSolana" roomIndex="-1" vr=`+VR+`>Money Boy Hub</a>`;
             list +=`<li class="`+selcted_room+`">`+roomVrFrame+`</li>`
@@ -221,7 +221,7 @@ function getUserInfo(twitter_name,modal){
             showVrBanner(defaultRoom);
           }
         } else {
-          var errorHtml = `<h4><strong><a href="https://main.d2elcgmt9fw3n1.amplifyapp.com/" target="_blank">Create a profile on our website</a></strong></h4>
+          var errorHtml = `<h4><strong><a href="https://solarity-frontend-vercel.app/" target="_blank">Create a profile on our website</a></strong></h4>
           <div class="error">`+result.response+`</div>`;
           $('.modal-container').html(errorHtml);
         }

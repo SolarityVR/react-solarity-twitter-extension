@@ -1,6 +1,6 @@
 var consts = {
   "getUserInfo":'https://solarity-backend.herokuapp.com/api/users/',
-  "roomVR":"https://main.d2elcgmt9fw3n1.amplifyapp.com/"
+  "roomVR":"https://solarity-frontend-vercel.app/"
 };
 
 //////////////////////////- inject -//////////////////////////
