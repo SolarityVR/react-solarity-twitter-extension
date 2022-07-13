@@ -102,7 +102,7 @@ async function addTwitterBtn() {
 
   var roomBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer" title="ROOM">`+roomIcon+`</div>`);
 
-  var viewBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer;color:#f2f2f2;" title="VIEW">`+'<svg xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;padding: 4px;" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>'+`</div>`)
+  var viewBtn = $(`<div class="btn-twitter-exts css-1dbjc4n r-obd0qt r-18u37iz r-1w6e6rj r-1h0z5md r-dnmrzs" style=" margin: 0px 8px 14px 0px;cursor:pointer;color:#f2f2f2;" title="VIEW">`+'<svg xmlns="http://www.w3.org/2000/svg" class="custom-icon-svg" style="width: 30px; height: 30px" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>'+`</div>`)
   $(roomBtn).click(function (e) {
     var twitter_name = parseUsername(window.location.href);
     if ($('.modal-container ul li').length == 0) {
@@ -258,7 +258,7 @@ function initModalBox(){
 }
 function showVrBanner(vr){
   var VR = vr;
-  var vrFrame=`<iframe frameborder="0" src="`+VR+`" featurepolicy='{"vr": ["*"]}' allow="camera;microphone;vr;" scrolling="no" width="100%" height="100%"></iframe>`;
+  var vrFrame=`<iframe frameborder="0" src="`+VR+`" featurepolicy='{"vr": ["*"]}' allow="camera;microphone;vr;" allowFullScreen="true" scrolling="no" width="100%" height="100%"></iframe>`;
   var carousel= `<div class="slider">
   <ul><li class="c"> `+vrFrame+` </li></ul></div>`;
   //show room crausal here

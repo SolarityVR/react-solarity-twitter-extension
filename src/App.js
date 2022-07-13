@@ -13,19 +13,19 @@ const usdc = chrome.runtime.getURL('static/media/USDC.svg')
 const verce = chrome.runtime.getURL('static/media/VERCE.svg')
 
 
- function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
- } 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+} 
+
 class App extends Component {
 
 constructor() {
     super();
     this.state = {
-    input_amount:1,
-    amout:0,
+      input_amount:1,
+      amout:0,
     };
     this.onInputchange = this.onInputchange.bind(this);
-    
   }
 
   onInputchange(event) {
@@ -52,75 +52,74 @@ constructor() {
  
 
 btnTipContinue(event) {
- var event = new CustomEvent('RecieveContentApp', {detail: { 'msg': "pay-wallet", amount:$('.a-c-sign').val(),currency:$('.currency-selcted-ext img').attr('alt') }});
+  var event = new CustomEvent('RecieveContentApp', {detail: { 'msg': "pay-wallet", amount:$('.a-c-sign').val(),currency:$('.currency-selcted-ext img').attr('alt') }});
   window.dispatchEvent(event); 
   $('body').find('.cover').show();
 }
 
 continueToPay(amount){
 this.state.amout=amount;
-$('.amount').removeClass('active');
-$('button[ value="'+amount+'"]').addClass('active');
-
+  $('.amount').removeClass('active');
+  $('button[ value="'+amount+'"]').addClass('active');
 }
 
 btnTipCancel(event) {
-$("#second-screen").hide();
-$('#first-screen').show();
+  $("#second-screen").hide();
+  $('#first-screen').show();
 } 
 onCancelClick(event) {
-$("#second-screen").hide();
-$('#first-screen').show();
+  $("#second-screen").hide();
+  $('#first-screen').show();
 }
 
 onContinueClick(event) {
-const targetC = $(".btn-c-select").find('.svg-check').parent();
-const src = $(targetC).find('img').attr('src');
-const alt = $(targetC).find('img').attr('alt');
-$('.currency-selcted-ext').find('img').attr('src',src);
-$('.currency-selcted-ext').find('img').attr('alt',alt);
-$('.currency-selcted-ext').find('span.sm').text(alt);
-$("#second-screen").hide();
-$('#first-screen').show();
-let settingsS = $('[name="input_amount"]').data('settings');
-let settings = JSON.parse(settingsS);
-let input_val = $('[name="input_amount"]').val() != ""?$('[name="input_amount"]').val():0;
+  const targetC = $(".btn-c-select").find('.svg-check').parent();
+  const src = $(targetC).find('img').attr('src');
+  const alt = $(targetC).find('img').attr('alt');
+  $('.currency-selcted-ext').find('img').attr('src',src);
+  $('.currency-selcted-ext').find('img').attr('alt',alt);
+  $('.currency-selcted-ext').find('span.sm').text(alt);
+  $("#second-screen").hide();
+  $('#first-screen').show();
+  let settingsS = $('[name="input_amount"]').data('settings');
+  let settings = JSON.parse(settingsS);
+  let input_val = $('[name="input_amount"]').val() != ""?$('[name="input_amount"]').val():0;
 
-$('.xs-price').show();
-if(alt == "SOL"){
-  $("#CURRENCY-SIGN").text('SOL');
- let finalP = (parseFloat(input_val) * settings.solana).toFixed(2);
- var priceData= '$ '+numberWithCommas(finalP);
- $('.xs-price').html(priceData);
-}else if(alt == "USDC"){
-  $("#CURRENCY-SIGN").text('USDC');
-  let finalP = (parseFloat(input_val) * settings.usdc).toFixed(2);
-  var priceData= '$ '+numberWithCommas(finalP);
-  $('.xs-price').html(priceData);
-}else{
-  $("#CURRENCY-SIGN").text('VERSE');
-  $('.xs-price').hide();
-}
+  $('.xs-price').show();
+  if(alt == "SOL"){
+    $("#CURRENCY-SIGN").text('SOL');
+    let finalP = (parseFloat(input_val) * settings.solana).toFixed(2);
+    var priceData= '$ '+numberWithCommas(finalP);
+    $('.xs-price').html(priceData);
+  } else if(alt == "USDC"){
+    $("#CURRENCY-SIGN").text('USDC');
+    let finalP = (parseFloat(input_val) * settings.usdc).toFixed(2);
+    var priceData= '$ '+numberWithCommas(finalP);
+    $('.xs-price').html(priceData);
+  } else {
+    $("#CURRENCY-SIGN").text('VERSE');
+    $('.xs-price').hide();
+  }
 
 }
 
 currencySelcte(event) {
-$("#first-screen").hide();
-$('#second-screen').show();
+  $("#first-screen").hide();
+  $('#second-screen').show();
 }
 
 closePayModal(event) {
-$('#twitter-pay-extension-root').hide();
-$('#solarity-extension-payment').hide();
-$("#second-screen").hide();
-$('#first-screen').show();
+  $('#twitter-pay-extension-root').hide();
+  $('#solarity-extension-payment').hide();
+  $("#second-screen").hide();
+  $('#first-screen').show();
 }
 
 
 render() {
 const { items } = this.state;
 return (
-<div id="solarity-extension-payment" className="open" >
+<div id="solarity-extension-payment" className="open" style={{width: "300px", height: "500px"}}>
   <div className="main-wrapper-pay">
     <div className="header-wrapper">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="close-btn-svg" onClick={this.closePayModal}>

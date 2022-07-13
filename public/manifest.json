@@ -1,24 +1,25 @@
 {
   "short_name": "Twitter Verse",
   "name": "Twitter Verse",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 3,
   "background": {
      "service_worker": "main.js"
   },
   "action": {
+    "default_popup": "index.html",
     "default_icon": {
-      "128": "ext.png",
-      "16": "ext.png",
-      "48": "ext.png"
+      "128": "logo.png",
+      "16": "logo.png",
+      "48": "logo.png"
     },
     "default_title": "Twitter EXT"
   },
   "description": "Twitter EXT",
   "icons": {
-    "128": "ext.png",
-    "16": "ext.png",
-    "48": "ext.png"
+    "128": "logo.png",
+    "16": "logo.png",
+    "48": "logo.png"
   },
   "content_scripts" : [
     {
