@@ -5,22 +5,22 @@ var consts = {
 
 //////////////////////////- inject -//////////////////////////
 
-function onExtMessage(message, sender, sendResponse){
-  switch (message.command) {
-    case "getTransaction":
-      // fetch_custom(message.data, sender, sendResponse)
-    break;
-  }
-  return true
-}
+// function onExtMessage(message, sender, sendResponse){
+//   switch (message.command) {
+//     case "getTransaction":
+//       // fetch_custom(message.data, sender, sendResponse)
+//     break;
+//   }
+//   return true
+// }
 
-chrome.runtime.onMessage.addListener(onExtMessage);
+// chrome.runtime.onMessage.addListener(onExtMessage);
 
 //  /////////////////////////////- bg.js -//////////////////////////////
-var version = "2.0";
-var uiSettings = {
+// var version = "2.0";
+// var uiSettings = {
   
-};
+// };
 var twitterApp = {
   onExtMessage: function(message, sender, sendResponse){ 
     twitterApp.message = message;
@@ -74,6 +74,7 @@ var twitterApp = {
       })
   }  
 };
+chrome.runtime.onMessage.addListener(twitterApp.onExtMessage);
 
 function getProductReviewAsync(api, type) {
   return new Promise(async (resolve, reject) => {
@@ -83,9 +84,6 @@ function getProductReviewAsync(api, type) {
     resolve(rs);
   });
 }
-
-chrome.runtime.onMessage.addListener(twitterApp.onExtMessage);
-// //twitterApp.load();
 
 function sendMessage2(tabId, msg){
   if(tabId) chrome.tabs.sendMessage(tabId, msg);

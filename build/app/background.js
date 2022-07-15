@@ -55,7 +55,7 @@ window.addEventListener('RecieveContent', function(evt) {
     // Establishing connection
     var connection = new solanaWeb3.Connection(
       solanaWeb3.clusterApiUrl('mainnet-beta'),
-      );
+    );
 
     // I have hardcoded my secondary wallet address here. You can take this address either from user input or your DB or wherever
     var recieverWallet = new solanaWeb3.PublicKey(solanaAddress);
@@ -68,44 +68,42 @@ window.addEventListener('RecieveContent', function(evt) {
         VERSE_pubkey,
         splToken.TOKEN_PROGRAM_ID,
         fromWallet
-        );
+      );
       var toTokenAccount = await VERSE_Token.getOrCreateAssociatedAccountInfo(
         recieverWallet
-        )
+      )
       // Create associated token accounts for my token if they don't exist yet
       var fromTokenAccount = await VERSE_Token.getOrCreateAssociatedAccountInfo(
         fromWallet.publicKey
-        )
+      )
       
       let lamports = parseFloat(amount) * solanaWeb3.LAMPORTS_PER_SOL;
       
       // Add token transfer instructions to transaction
       var transaction = new solanaWeb3.Transaction()
-      .add(
-        splToken.Token.createTransferInstruction(
-          splToken.TOKEN_PROGRAM_ID,
-          fromTokenAccount.address,
-          toTokenAccount.address,
-          fromWallet.publicKey,
-          [],
-          lamports
+        .add(
+          splToken.Token.createTransferInstruction(
+            splToken.TOKEN_PROGRAM_ID,
+            fromTokenAccount.address,
+            toTokenAccount.address,
+            fromWallet.publicKey,
+            [],
+            lamports
           )
         );
 
-        try{
+        try {
           const blockHash = await connection.getRecentBlockhash()
-        transaction.feePayer = await fromWallet.publicKey;
-        transaction.recentBlockhash = await blockHash.blockhash
-        const signed = await fromWallet.signTransaction(transaction)
-        document.querySelector('.cover').style.display = "none";
-        const transactionSignature = await connection.sendRawTransaction(
-                    signed.serialize(),
-                    { skipPreflight: true }
-                  ); 
-        console.log(transactionSignature);
-        document.querySelector('.cover').style.display = "none";
-        }catch(e){
-          console.log(e);
+          transaction.feePayer = await fromWallet.publicKey;
+          transaction.recentBlockhash = await blockHash.blockhash
+          const signed = await fromWallet.signTransaction(transaction)
+          document.querySelector('.cover').style.display = "none";
+          const transactionSignature = await connection.sendRawTransaction(
+            signed.serialize(),
+            { skipPreflight: true }
+          );
+          document.querySelector('.cover').style.display = "none";
+        } catch(e) {
           document.querySelector('.cover').style.display = "none";
         }
       }
