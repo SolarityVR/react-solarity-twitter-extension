@@ -7,15 +7,9 @@
      "service_worker": "main.js"
   },
   "action": {
-    "default_popup": "index.html",
-    "default_icon": {
-      "128": "logo.png",
-      "16": "logo.png",
-      "48": "logo.png"
-    },
-    "default_title": "Twitter EXT"
+    "default_popup": "index.html"
   },
-  "description": "Twitter EXT",
+  "description": "Twitter Extension",
   "icons": {
     "128": "logo.png",
     "16": "logo.png",
